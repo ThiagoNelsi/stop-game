@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaUsers } from 'react-icons/fa';
 import { v4 as uuidv4 } from 'uuid';
+import { Socket } from 'socket.io-client';
 
 import './styles.css';
 
@@ -11,17 +12,26 @@ interface IRoom {
   maxPlayers: number;
 }
 
-function Rooms() {
+interface RoomsComponent {
+  socket: Socket | null;
+}
+
+function Rooms({ socket }: RoomsComponent) {
 
   const [rooms, setRooms] = useState<IRoom[]>(Array(0));
- 
+  const [onlineUsers, setOnlineUsers] = useState(0);
+
   useEffect(() => {
     setRooms(roomsMock);
   }, []);
 
+  socket?.on?.('user count', (users) => {
+    setOnlineUsers(users);
+  });
+  
   return (
     <div className="rooms">
-      <h3>SALAS</h3>
+      <h3>SALAS <span>online: {onlineUsers}</span></h3>
       <ul>
       {
         rooms.map(room => (

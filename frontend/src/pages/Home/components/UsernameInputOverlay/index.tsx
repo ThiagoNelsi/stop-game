@@ -1,42 +1,28 @@
-import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
-import './styles.css';
+import { Container } from './styles';
 
 interface Props {
   container: React.RefObject<HTMLDivElement>;
+  connect: Function;
+  visible: boolean;
 }
 
-function UsernameInputOverlay({ container }: Props) {
+function UsernameInputOverlay({ container, connect, visible }: Props) {
 
   const overlay = useRef<HTMLFormElement>(null);
   const usernameInput = useRef<HTMLInputElement>(null);
 
-  const [username, setUsername] = useState('');
+  const handleSubmit = (event: React.FormEvent) => {
 
-  useLayoutEffect(() => {
-    showUsernameInput();
-  });
-
-  function showUsernameInput() {
-    if (overlay.current && usernameInput.current && container.current) {
-      overlay.current.style.display = 'flex';
-      container.current.style.overflow = 'hidden';
-      usernameInput.current.focus();
-    }
-  }
-
-  function closeUsernameInput(event: React.FormEvent) {
     event.preventDefault();
-    if (username !== '' && overlay.current && container.current) {
-      overlay.current.style.display = 'none';
-      container.current.style.overflow = 'auto';
-    } else {
-      alert('Insira um nome');
-    }
+
+    if (usernameInput.current?.value) 
+      connect(usernameInput.current.value);
   }
 
   return (
-    <form className="username-overlay" ref={overlay} onSubmit={closeUsernameInput}>
+    <Container className="username-overlay" ref={overlay} visible={visible}>
       <div className="overlay-box">
         <h1>Username:</h1>
         <input
@@ -44,12 +30,10 @@ function UsernameInputOverlay({ container }: Props) {
           name="username"
           id="username"
           ref={usernameInput}
-          value={username}
-          onChange={event => setUsername(event.target.value)}
         />
-        <button type="submit">ENTRAR</button>
+        <button type="submit" onClick={(event) => handleSubmit(event)}>ENTRAR</button>
       </div>
-    </form>
+    </Container>
   );
 
 }

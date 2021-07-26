@@ -1,4 +1,5 @@
-import React, { useRef } from 'react';
+import React, { useState, useRef, useContext } from 'react';
+import { Socket } from 'socket.io-client';
 
 import NewRoom from './components/NewRoom';
 import Rooms from './components/Rooms';
@@ -6,21 +7,41 @@ import UsernameInputOverlay from './components/UsernameInputOverlay';
 
 import { Container } from './styles';
 
+import { appContext } from '../../context';
+
 function Home() {
+
+  const { socket } = useContext(appContext);
+  
+  const [username, setUsername] = useState('');
+  const [usernameOverlayVisible, setUsernameOverlayVisible] = useState(false);
 
   const container = useRef<HTMLDivElement>(null);
 
+  const connectUser = (name: string) => {
+
+    socket?.emit?.('new user', name);
+
+    socket?.on?.('user registered', () => {
+      setUsername(name);
+      setUsernameOverlayVisible(false);
+    });
+
+  }
+
+  socket?.on?.('connected', () => setUsernameOverlayVisible(true));
+
   return (
     <Container ref={container}>
-      <UsernameInputOverlay container={container} />
+      <UsernameInputOverlay container={container} connect={connectUser} visible={usernameOverlayVisible} />
       <header>
-        <h1>STOP! <span>Username: Thiago</span></h1>
+        <h1>STOP! <span>Username: {username}</span></h1>
         <input type="text" name="search" id="search" placeholder="Pesquisar sala..." />
       </header>
       
       <main>
         <NewRoom />
-        <Rooms />
+        <Rooms socket={socket} />
       </main>
     </Container>
   );
