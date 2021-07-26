@@ -2,6 +2,7 @@ import express from 'express';
 import http from 'http';
 import cors from 'cors';
 import { Server } from 'socket.io';
+import mongoose from 'mongoose';
 
 import connection from './listeners/connection';
 
@@ -15,11 +16,18 @@ const io = new Server(server, { cors: { origin: "*" } });
 const PORT = 8000;
 
 const SERVER_DATA: ts.IServerData = {
-    onlineUsers: 0,
+    onlineUsers: () => Number(io.engine.clientsCount),
 }
 
 connection(io, SERVER_DATA);
 
-server.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}`);
+mongoose.connect('mongodb://localhost:27017/dev', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+}).then(() => {
+    server.listen(PORT, () => {
+        console.log(`Server listening on port ${PORT}`);
+    });
 });
+

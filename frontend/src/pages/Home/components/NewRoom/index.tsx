@@ -1,10 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import { FaTimesCircle } from 'react-icons/fa';
 import { v4 as uuidv4 } from 'uuid';
+
+import { appContext } from '../../../../context';
 
 import './styles.css';
 
 function NewRoom() {
+
+  const { socket } = useContext(appContext);
 
   const MAX_COLUMNS = 20;
 
@@ -22,7 +26,7 @@ function NewRoom() {
     if (newRoomAccess === 'public' && newRoomPasswordInput.current) {
       newRoomPasswordInput.current.style.display = 'none';
       setNewRoomPassword('');
-    } else if (newRoomPasswordInput.current){
+    } else if (newRoomPasswordInput.current) {
       newRoomPasswordInput.current.style.display = 'block';
     }
   }, [newRoomAccess]);
@@ -54,13 +58,27 @@ function NewRoom() {
   }
 
   function handleSubmitNewRoom() {
+    console.log(newRoomName, newRoomColumns, newRoomMaxPlayers, newRoomAccess)
     if (newRoomName && newRoomColumns.length > 0 && newRoomMaxPlayers) {
       if (newRoomAccess === 'public' || (newRoomAccess === 'private' && newRoomPassword)) {
         // send data to backend
-        return;
+
+        socket?.emit?.('create-room', {
+          name: newRoomName,
+          columns: newRoomColumns,
+          maxPlayers: newRoomMaxPlayers,
+          privacy: newRoomAccess,
+          password: newRoomPassword,
+          turnTime: 60,
+        });
+
+        socket?.on?.('room-name-unavailable', () => {
+          alert('[Erro] - Já existe uma sala com esse nome!');
+        });
       }
+    } else {
+      alert('Preencha todos os campos');
     }
-    alert('Preencha todos os campos');
   }
 
   return (
@@ -90,7 +108,7 @@ function NewRoom() {
               ref={newRoomInput}
               value={newColumn}
               onChange={event => setNewColumn(event.target.value)}
-              onKeyPress={event => event.key === 'Enter' ? handleNewColumn() : null }
+              onKeyPress={event => event.key === 'Enter' ? handleNewColumn() : null}
             />
             <div className="added-columns">
               {

@@ -3,7 +3,7 @@ import { FaUsers } from 'react-icons/fa';
 import { v4 as uuidv4 } from 'uuid';
 import { Socket } from 'socket.io-client';
 
-import './styles.css';
+import { Container } from './styles';
 
 interface IRoom {
   name: string;
@@ -19,19 +19,21 @@ interface RoomsComponent {
 function Rooms({ socket }: RoomsComponent) {
 
   const [rooms, setRooms] = useState<IRoom[]>(Array(0));
-  const [onlineUsers, setOnlineUsers] = useState(0);
 
   useEffect(() => {
     setRooms(roomsMock);
   }, []);
 
-  socket?.on?.('user count', (users) => {
-    setOnlineUsers(users);
-  });
+  socket?.off('room-created')?.on?.('room-created', (room: IRoom) => {
+    console.log({ room, rooms })
+    setRooms(prev => [room, ...prev]);
+  })
+
+  socket?.on?.('rooms', data => setRooms(data.reverse()));
   
   return (
-    <div className="rooms">
-      <h3>SALAS <span>online: {onlineUsers}</span></h3>
+    <Container>
+      <h3>SALAS</h3>
       <ul>
       {
         rooms.map(room => (
@@ -43,36 +45,36 @@ function Rooms({ socket }: RoomsComponent) {
         ))
       }
       </ul>
-    </div>
+    </Container>
   );
 
 }
 
 const roomsMock: IRoom[] = [
-  {
-    name: 'Some name',
-    columns: ['col1', 'column 2', 'mycolumn', 'some column', 'testing', 'mycolumn', 'some column', 'testing'],
-    onlinePlayers: 5,
-    maxPlayers: 5,
-  },
-  {
-    name: 'Some name',
-    columns: ['col1', 'column 2', 'mycolumn', 'some column', 'testing'],
-    onlinePlayers: 5,
-    maxPlayers: 10,
-  },
-  {
-    name: 'Some name',
-    columns: ['col1', 'column 2', 'mycolumn', 'some column', 'testing'],
-    onlinePlayers: 6,
-    maxPlayers: 15,
-  },
-  {
-    name: 'Some name',
-    columns: ['col1', 'column 2', 'mycolumn', 'some column', 'testing'],
-    onlinePlayers: 5,
-    maxPlayers: 5,
-  },
+  // {
+  //   name: 'Some name',
+  //   columns: ['col1', 'column 2', 'mycolumn', 'some column', 'testing', 'mycolumn', 'some column', 'testing'],
+  //   onlinePlayers: 5,
+  //   maxPlayers: 5,
+  // },
+  // {
+  //   name: 'Some name',
+  //   columns: ['col1', 'column 2', 'mycolumn', 'some column', 'testing'],
+  //   onlinePlayers: 5,
+  //   maxPlayers: 10,
+  // },
+  // {
+  //   name: 'Some name',
+  //   columns: ['col1', 'column 2', 'mycolumn', 'some column', 'testing'],
+  //   onlinePlayers: 6,
+  //   maxPlayers: 15,
+  // },
+  // {
+  //   name: 'Some name',
+  //   columns: ['col1', 'column 2', 'mycolumn', 'some column', 'testing'],
+  //   onlinePlayers: 5,
+  //   maxPlayers: 5,
+  // },
 ];
 
 export default Rooms;

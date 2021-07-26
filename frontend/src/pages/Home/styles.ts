@@ -26,9 +26,12 @@ export const Container = styled.div`
         align-items: center;
     }
 
-    header span {
+    header div {
         font-size: 12pt;
         margin-left: auto;
+        span {
+            margin-left: 50px;
+        }
     }
 
     input#search {

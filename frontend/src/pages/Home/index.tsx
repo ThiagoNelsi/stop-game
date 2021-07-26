@@ -15,6 +15,7 @@ function Home() {
   
   const [username, setUsername] = useState('');
   const [usernameOverlayVisible, setUsernameOverlayVisible] = useState(false);
+  const [onlineUsers, setOnlineUsers] = useState(0);
 
   const container = useRef<HTMLDivElement>(null);
 
@@ -29,13 +30,22 @@ function Home() {
 
   }
 
+  socket?.on?.('user count', (users) => {
+    setOnlineUsers(users);
+  });
+
   socket?.on?.('connected', () => setUsernameOverlayVisible(true));
 
   return (
     <Container ref={container}>
       <UsernameInputOverlay container={container} connect={connectUser} visible={usernameOverlayVisible} />
       <header>
-        <h1>STOP! <span>Username: {username}</span></h1>
+        <h1>STOP! 
+          <div>
+            <span>Online Players: {onlineUsers}</span>
+            <span>Username: {username}</span>
+          </div>
+        </h1>
         <input type="text" name="search" id="search" placeholder="Pesquisar sala..." />
       </header>
       
