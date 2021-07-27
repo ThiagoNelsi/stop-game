@@ -4,10 +4,13 @@ import cors from 'cors';
 import { Server } from 'socket.io';
 import mongoose from 'mongoose';
 
+import routes from './routes';
 import connection from './listeners/connection';
 
 const app = express();
 app.use(cors());
+
+app.use(routes);
 
 const server = http.createServer(app);
 

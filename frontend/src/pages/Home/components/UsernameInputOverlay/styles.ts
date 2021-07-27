@@ -4,7 +4,6 @@ interface IContainer {
     visible: boolean;
 }
 
-
 export const Container = styled.form<IContainer>`
 
     position: absolute;
@@ -16,6 +15,7 @@ export const Container = styled.form<IContainer>`
     display: ${({ visible }) => visible ? 'flex' : 'none'};
     align-items: center;
     justify-content: center;
+    z-index: 1000;
 
     .overlay-box {
         width: 500px;

@@ -3,12 +3,12 @@ import styled from 'styled-components';
 export const Container = styled.div`
 
     height: 100%;
-    width: 400px;
     border-radius: 6px;
     background-color: #FFF;
     box-shadow: 0px 4px 9px rgba(0, 0, 0, 0.25);
     display: flex;
     flex-direction: column;        
+    flex: 4;
 
     h3 {
         font-size: 18pt;
@@ -47,6 +47,12 @@ export const Container = styled.div`
         font-size: 11pt;
         text-transform: uppercase;
         margin-bottom: 5px;
+        display: flex;
+        align-items: center;
+
+        svg {
+            margin-right: 10px;
+        }
     }
 
     ul li .room-columns {
